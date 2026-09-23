@@ -1,0 +1,20 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Sign in | BizChurn</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/auth.css') }}">
+</head>
+<body class="auth-page">
+  <main class="auth-shell"><a class="brand auth-brand" href="{{ url_for('login') }}"><span class="brand-mark">B</span><span>BizChurn</span></a>
+    <section class="auth-card"><span class="section-kicker">RETENTION INTELLIGENCE</span><h1>Welcome back.</h1><p class="auth-subtitle">Sign in to continue exploring your customer risk signals.</p>
+      {% with messages = get_flashed_messages(with_categories=true) %}{% if messages %}<div class="flash-stack">{% for category, message in messages %}<div class="flash {{ category }}">{{ message }}</div>{% endfor %}</div>{% endif %}{% endwith %}
+      <form method="post" class="auth-form"><label for="email">Email</label><input id="email" name="email" type="email" value="{{ email|default('') }}" autocomplete="email" required><label for="password">Password</label><input id="password" name="password" type="password" autocomplete="current-password" required><button class="button primary" type="submit">Sign in</button></form>
+      <p class="auth-switch">New to BizChurn? <a href="{{ url_for('signup') }}">Create an account</a></p>
+    </section>
+  </main>
+</body>
+</html>

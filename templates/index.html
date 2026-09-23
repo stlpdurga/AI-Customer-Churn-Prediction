@@ -1,0 +1,34 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>BizChurn | Retention Intelligence</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
+</head>
+<body>
+  <nav class="nav"><a class="brand" href="#top"><span class="brand-mark">B</span><span>BizChurn</span></a><div class="nav-links"><a href="#top">Dashboard</a><a href="#history">History</a><span class="nav-meta">Welcome, {{ session.get('user_name') }}</span><a class="logout-link" href="{{ url_for('logout') }}">Logout</a></div></nav>
+  <main id="top">
+    <section class="hero"><div class="eyebrow">CUSTOMER CHURN PREDICTION & RETENTION INTELLIGENCE</div><h1>Predict customer churn <em>before</em> customers leave.</h1><p>Upload your customer data, uncover the signals behind retention, and focus your next best action where it matters.</p><a class="hero-link" href="#upload">Start with a dataset <span>↘</span></a></section>
+    <section class="workspace" id="upload">
+      <div class="section-heading"><div><span class="section-kicker">01 / Ingest</span><h2>Bring your customer data.</h2></div><span class="quiet">CSV or XLSX · max 10 MB</span></div>
+      <div class="upload-zone" id="dropZone"><div class="upload-icon">↑</div><h3>Drop your dataset here</h3><p>We dynamically detect fields, data quality, and whether churn prediction is possible.</p><label class="button primary" for="fileInput">Browse file</label><input id="fileInput" type="file" accept=".csv,.xlsx" hidden><div id="fileName" class="file-name"></div></div>
+      <div id="notice" class="notice" hidden></div>
+    </section>
+    <section class="workspace results" id="results" hidden>
+      <div class="section-heading"><div><span class="section-kicker">02 / Readout</span><h2 id="datasetTitle">Dataset overview</h2></div><div class="actions"><button class="button ghost" id="saveButton">Save analysis</button><button class="button ghost" id="summaryButton">Export summary</button></div></div>
+      <div class="kpi-grid" id="kpis"></div>
+      <div class="two-col"><article class="panel"><div class="panel-title"><h3>Data quality</h3><span id="qualityBadge" class="badge"></span></div><div id="quality"></div></article><article class="panel"><div class="panel-title"><h3>Detected roles</h3><span class="muted">inferred from your schema</span></div><div id="roles" class="role-list"></div></article></div>
+      <div class="section-heading model-heading"><div><span class="section-kicker">03 / Predict</span><h2>Train the intelligence layer.</h2></div><div class="model-controls"><select id="modelSelect"><option>Random Forest</option><option>Logistic Regression</option><option>Gradient Boosting</option></select><button class="button primary" id="trainButton">Train model</button></div></div>
+      <div id="modelMessage" class="model-message"></div><div class="metrics-grid" id="metrics"></div>
+      <div id="predictionSection" hidden><div class="section-heading"><div><span class="section-kicker">04 / Act</span><h2>Customer risk intelligence.</h2></div><button class="button ghost" id="predictionButton">Download predictions</button></div><div class="risk-strip" id="riskStrip"></div><div class="two-col lower"><article class="panel chart-panel"><div class="panel-title"><h3>Risk distribution</h3></div><canvas id="riskChart"></canvas></article><article class="panel"><div class="panel-title"><h3>Observed signals</h3><span class="muted">association, not causation</span></div><div id="drivers"></div></article></div><article class="panel table-panel"><div class="table-toolbar"><h3>Customer risk table</h3><input id="searchInput" placeholder="Search customers or attributes..."><select id="riskFilter"><option value="">All risk levels</option><option>High Risk</option><option>Medium Risk</option><option>Low Risk</option></select></div><div class="table-wrap"><table><thead id="tableHead"></thead><tbody id="tableBody"></tbody></table></div></article></div>
+      <div class="section-heading insights-heading"><div><span class="section-kicker">05 / Interpret</span><h2>Business insights.</h2></div><button class="button primary" id="insightsButton">Generate insights</button></div><div class="insights panel" id="insights"><p class="muted">Insights remain grounded in the calculated analytics. Your raw customer records are never sent to the AI service.</p></div>
+      <div class="section-heading"><div><span class="section-kicker">06 / Context</span><h2>Analysis history.</h2></div></div><div class="panel history" id="history"><p class="muted">Saved analyses will appear here.</p></div>
+    </section>
+  </main>
+  <footer><span>BizChurn</span><span>Prediction is an estimate, not certainty.</span></footer>
+  <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+</body>
+</html>
