@@ -9,7 +9,7 @@
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
 </head>
 <body>
-  <nav class="nav"><a class="brand" href="#top"><span class="brand-mark">B</span><span>BizChurn</span></a><div class="nav-links"><a href="#top">Dashboard</a><a href="#history">History</a><span class="nav-meta">Welcome, {{ session.get('user_name') }}</span><a class="logout-link" href="{{ url_for('logout') }}">Logout</a></div></nav>
+  <nav class="nav"><a class="brand" href="#top"><span class="brand-mark">B</span><span>BizChurn</span></a><div class="nav-links"><a class="nav-button" href="{{ url_for('dashboard') }}">Dashboard</a><a class="nav-button" href="#history">History</a><span class="nav-meta">Welcome, {{ session.get('user_name') }}</span><a class="nav-button logout-link" href="{{ url_for('logout') }}">Logout</a></div></nav>
   <main id="top">
     <section class="hero"><div class="eyebrow">CUSTOMER CHURN PREDICTION & RETENTION INTELLIGENCE</div><h1>Predict customer churn <em>before</em> customers leave.</h1><p>Upload your customer data, uncover the signals behind retention, and focus your next best action where it matters.</p><a class="hero-link" href="#upload">Start with a dataset <span>↘</span></a></section>
     <section class="workspace" id="upload">

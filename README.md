@@ -1,6 +1,3 @@
-<<<<<<< HEAD
-# AI-Customer-Churn-Prediction
-=======
 # BizChurn
 
 BizChurn is a production-style Flask application for customer churn prediction and retention intelligence. It accepts arbitrary CSV and XLSX customer datasets, profiles them, infers likely business fields, trains a leakage-aware scikit-learn pipeline when a valid churn target exists, and presents probability estimates with clear limitations.
@@ -19,6 +16,8 @@ python app.py
 ```
 
 Open `http://127.0.0.1:5000`. New users can create an account, then sign in to access the dashboard. Set a long random value for `FLASK_SECRET_KEY` in `.env`; set `SESSION_COOKIE_SECURE=1` when serving over HTTPS. To enable Gemini narrative insights, place a key in `GEMINI_API_KEY` in `.env`. The key is never sent to the browser and raw customer rows are not included in the prompt.
+
+For Vercel, set `DATABASE_URL` to a hosted PostgreSQL connection string. Vercel serverless storage is ephemeral, so the local SQLite database is not suitable for account persistence there.
 
 ## Data and modeling
 
@@ -39,4 +38,3 @@ pytest -q
 ```
 
 Tests cover upload validation, missing values, duplicates, dynamic schemas, target absence, insufficient classes, health, and route errors. Customer data is held only in the current process; SQLite stores analysis summaries, not raw uploads. Keep `.env` and the SQLite file out of version control.
->>>>>>> 0ef7760 (AI-Customer-Churn-Prediction)

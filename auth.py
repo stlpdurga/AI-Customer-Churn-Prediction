@@ -1,4 +1,5 @@
 import re
+import logging
 from functools import wraps
 
 from flask import flash, jsonify, redirect, render_template, request, session, url_for
@@ -8,6 +9,7 @@ from database.db import create_user, user_by_email
 
 EMAIL_PATTERN = re.compile(r"^[^\s@]+@[^\s@]+\.[^\s@]+$")
 MIN_PASSWORD_LENGTH = 8
+logger = logging.getLogger(__name__)
 
 
 def login_required(view):
@@ -43,13 +45,25 @@ def register_auth_routes(app):
                 errors.append(f"Password must be at least {MIN_PASSWORD_LENGTH} characters.")
             if password != confirm_password:
                 errors.append("Passwords do not match.")
-            if not errors and user_by_email(email):
-                errors.append("An account with this email already exists.")
+            if not errors:
+                try:
+                    existing_user = user_by_email(email)
+                except Exception:
+                    logger.exception("Unable to check for an existing user during signup")
+                    flash("Account service is temporarily unavailable. Please try again.", "error")
+                    return render_template("signup.html", name=name, email=email), 503
+                if existing_user:
+                    errors.append("An account with this email already exists.")
             if errors:
                 for error in errors:
                     flash(error, "error")
                 return render_template("signup.html", name=name, email=email), 400
-            create_user(name, email, generate_password_hash(password))
+            try:
+                create_user(name, email, generate_password_hash(password))
+            except Exception:
+                logger.exception("Unable to create user account")
+                flash("Account service is temporarily unavailable. Please try again.", "error")
+                return render_template("signup.html", name=name, email=email), 503
             flash("Your account was created. Sign in to continue.", "success")
             return redirect(url_for("login"))
         return render_template("signup.html")
@@ -61,7 +75,23 @@ def register_auth_routes(app):
         if request.method == "POST":
             email = request.form.get("email", "").strip().lower()
             password = request.form.get("password", "")
-            user = user_by_email(email)
+            errors = []
+            if not email:
+                errors.append("Email is required.")
+            elif not EMAIL_PATTERN.match(email):
+                errors.append("Enter a valid email address.")
+            if not password:
+                errors.append("Password is required.")
+            if errors:
+                for error in errors:
+                    flash(error, "error")
+                return render_template("login.html", email=email), 400
+            try:
+                user = user_by_email(email)
+            except Exception:
+                logger.exception("Unable to look up user during login")
+                flash("Account service is temporarily unavailable. Please try again.", "error")
+                return render_template("login.html", email=email), 503
             if not user or not check_password_hash(user["password_hash"], password):
                 flash("Invalid email or password.", "error")
                 return render_template("login.html", email=email), 401

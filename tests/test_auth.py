@@ -48,6 +48,28 @@ def test_invalid_login_is_generic(client):
     assert b"Invalid email or password." in response.data
 
 
+def test_login_requires_email_and_password(client):
+    response = client.post("/login", data={"email": "", "password": ""})
+    assert response.status_code == 400
+    assert b"Email is required." in response.data
+    assert b"Password is required." in response.data
+
+
+def test_login_rejects_malformed_email(client):
+    response = client.post("/login", data={"email": "not-an-email", "password": "strongpass"})
+    assert response.status_code == 400
+    assert b"Enter a valid email address." in response.data
+
+
+def test_login_after_logout_rejects_wrong_password(client):
+    signup(client)
+    client.post("/login", data={"email": "jane@example.com", "password": "strongpass"})
+    client.get("/logout")
+    response = client.post("/login", data={"email": "jane@example.com", "password": "wrongpass"})
+    assert response.status_code == 401
+    assert b"Invalid email or password." in response.data
+
+
 def test_logout_clears_session(client):
     signup(client)
     client.post("/login", data={"email": "jane@example.com", "password": "strongpass"})
