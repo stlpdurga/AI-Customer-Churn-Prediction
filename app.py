@@ -17,11 +17,15 @@ from utils.validators import validate_upload
 
 load_dotenv()
 app = Flask(__name__)
+is_vercel = os.getenv("VERCEL") == "1"
+secret_key = os.getenv("FLASK_SECRET_KEY")
+if is_vercel and not secret_key:
+    raise RuntimeError("FLASK_SECRET_KEY must be configured in Vercel project settings.")
 app.config.update(
-    SECRET_KEY=os.getenv("FLASK_SECRET_KEY") or os.urandom(32),
+    SECRET_KEY=secret_key or os.urandom(32),
     SESSION_COOKIE_HTTPONLY=True,
     SESSION_COOKIE_SAMESITE="Lax",
-    SESSION_COOKIE_SECURE=os.getenv("SESSION_COOKIE_SECURE", "0") == "1",
+    SESSION_COOKIE_SECURE=os.getenv("SESSION_COOKIE_SECURE", "1" if is_vercel else "0") == "1",
 )
 app.config["MAX_CONTENT_LENGTH"] = 10 * 1024 * 1024
 STATE = {"frame": None, "profile": None, "trained": None, "predictions": None, "dataset_name": None}

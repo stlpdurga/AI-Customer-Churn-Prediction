@@ -17,7 +17,14 @@ python app.py
 
 Open `http://127.0.0.1:5000`. New users can create an account, then sign in to access the dashboard. Set a long random value for `FLASK_SECRET_KEY` in `.env`; set `SESSION_COOKIE_SECURE=1` when serving over HTTPS. To enable Gemini narrative insights, place a key in `GEMINI_API_KEY` in `.env`. The key is never sent to the browser and raw customer rows are not included in the prompt.
 
-For Vercel, set `DATABASE_URL` to a hosted PostgreSQL connection string. Vercel serverless storage is ephemeral, so the local SQLite database is not suitable for account persistence there.
+For Vercel, configure these Environment Variables for the Production environment before deploying:
+
+- `FLASK_SECRET_KEY`: a long random value. This must remain stable so login sessions survive serverless cold starts.
+- `DATABASE_URL`: a hosted PostgreSQL connection string, including any required SSL parameters such as `?sslmode=require`.
+- `SESSION_COOKIE_SECURE=1`: recommended for HTTPS deployments; this is the default when Vercel is detected.
+- `GEMINI_API_KEY`: optional, for AI narrative insights.
+
+Vercel serverless storage is ephemeral, so the local SQLite database is not suitable for account persistence there. Users must sign up once against the deployed app because the local development database is separate from the production PostgreSQL database. The app now fails at startup with a clear configuration error instead of silently using non-persistent SQLite or a random session key.
 
 ## Data and modeling
 

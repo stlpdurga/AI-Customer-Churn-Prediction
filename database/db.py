@@ -7,8 +7,15 @@ def _postgres_url():
     return os.getenv("DATABASE_URL") or os.getenv("POSTGRES_URL")
 
 
-def init_db():
+def _database_url_or_fail():
     database_url = _postgres_url()
+    if os.getenv("VERCEL") == "1" and not database_url:
+        raise RuntimeError("DATABASE_URL must be configured in Vercel project settings.")
+    return database_url
+
+
+def init_db():
+    database_url = _database_url_or_fail()
     if database_url:
         import psycopg
         from psycopg.rows import dict_row
@@ -25,7 +32,7 @@ def init_db():
 
 
 def connection():
-    database_url = _postgres_url()
+    database_url = _database_url_or_fail()
     if database_url:
         import psycopg
         from psycopg.rows import dict_row
